@@ -2,6 +2,8 @@
 
 import random
 import numpy
+import matplotlib
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import pickle
 
@@ -9,8 +11,8 @@ from outlier_cleaner import outlierCleaner
 
 
 ### load up some practice data with outliers in it
-ages = pickle.load( open("practice_outliers_ages.pkl", "r") )
-net_worths = pickle.load( open("practice_outliers_net_worths.pkl", "r") )
+ages = pickle.load( open("./outliers/practice_outliers_ages.pkl", "r") )
+net_worths = pickle.load( open("./outliers/practice_outliers_net_worths.pkl", "r") )
 
 
 
@@ -26,6 +28,14 @@ ages_train, ages_test, net_worths_train, net_worths_test = train_test_split(ages
 ### fill in a regression here!  Name the regression object reg so that
 ### the plotting code below works, and you can see what your regression looks like
 
+from sklearn.linear_model import LinearRegression
+reg = LinearRegression()
+reg.fit(ages_train,net_worths_train)
+print('coef_:', reg.coef_)
+print('intercept_', reg.intercept_)
+# print(len(ages_train))
+# print(reg.score(feature_train,target_train))
+# print(reg.score(feature_test,target_test))
 
 
 
@@ -41,7 +51,7 @@ try:
 except NameError:
     pass
 plt.scatter(ages, net_worths)
-plt.show()
+# plt.show()
 
 
 ### identify and remove the most outlier-y points
@@ -68,7 +78,11 @@ if len(cleaned_data) > 0:
     ### refit your cleaned data!
     try:
         reg.fit(ages, net_worths)
-        plt.plot(ages, reg.predict(ages), color="blue")
+        print(reg.coef_)
+        print(reg.score(ages,net_worths))
+        print(reg.score(ages_test,net_worths_test))
+
+        plt.plot(ages, reg.predict(ages), color="red")
     except NameError:
         print "you don't seem to have regression imported/created,"
         print "   or else your regression object isn't named reg"
@@ -81,4 +95,3 @@ if len(cleaned_data) > 0:
 
 else:
     print "outlierCleaner() is returning an empty list, no refitting to be done"
-
